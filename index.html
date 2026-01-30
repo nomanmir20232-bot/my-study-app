@@ -3,113 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Study Pro - NOMAN Edition</title>
+    <title>NOMAN's Study Hub</title>
     <style>
-        :root { --primary: #5e6df2; --bg: #f4f7fe; --card: #ffffff; --accent: #ff7675; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; display: flex; flex-direction: column; align-items: center; padding-bottom: 30px; }
+        :root { --primary: #5e6df2; --bg: #f4f7fe; --card: #ffffff; --accent: #ff7675; --success: #4caf50; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; display: flex; flex-direction: column; align-items: center; padding-bottom: 50px; color: #2d3436; }
         
-        /* Welcome Noman Section */
-        .welcome-header { background: var(--primary); color: white; width: 100%; padding: 30px 0; text-align: center; border-radius: 0 0 30px 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .welcome-header h1 { margin: 0; font-size: 28px; letter-spacing: 1px; }
-        .welcome-header p { margin: 5px 0 0; opacity: 0.9; font-size: 14px; }
+        .header { background: var(--primary); color: white; width: 100%; padding: 40px 0; text-align: center; border-radius: 0 0 40px 40px; box-shadow: 0 10px 20px rgba(94,109,242,0.2); }
+        .header h1 { margin: 0; font-size: 32px; font-weight: 800; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        
+        .container { width: 92%; max-width: 480px; margin-top: -30px; }
+        .card { background: var(--card); border-radius: 25px; padding: 25px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; border: 1px solid rgba(255,255,255,0.8); }
+        
+        /* Exam Countdown Styles */
+        .countdown-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 20px; }
+        .time-box { background: #fcf1f1; padding: 15px 5px; border-radius: 18px; border: 1px solid #ffecec; }
+        .time-box span { display: block; font-size: 24px; font-weight: 800; color: var(--accent); }
+        .time-box label { font-size: 11px; font-weight: bold; color: #b2bec3; text-transform: uppercase; }
 
-        .container { width: 95%; max-width: 450px; margin-top: 20px; }
-        .card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); text-align: center; border: 1px solid #eee; }
+        /* General UI Elements */
+        input { width: 90%; padding: 15px; border-radius: 15px; border: 2px solid #edf2f7; margin: 10px 0; font-size: 16px; transition: 0.3s; }
+        input:focus { border-color: var(--primary); outline: none; }
+        .btn { border: none; padding: 18px; border-radius: 18px; font-weight: 800; cursor: pointer; width: 100%; font-size: 16px; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-success { background: var(--success); color: white; margin-top: 10px; }
         
-        h3 { margin-top: 0; color: #2d3436; font-size: 18px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        
-        /* Countdown Grid */
-        input[type="datetime-local"] { width: 90%; padding: 12px; border-radius: 12px; border: 2px solid #ddd; margin: 10px 0; font-family: inherit; }
-        .countdown-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 20px; }
-        .time-box { background: #f8f9fa; padding: 12px 5px; border-radius: 15px; border-bottom: 4px solid var(--accent); }
-        .time-box span { display: block; font-size: 22px; font-weight: 800; color: var(--accent); }
-        .time-box label { font-size: 10px; text-transform: uppercase; font-weight: bold; color: #636e72; }
-
-        /* Timer Section */
-        .timer-val { font-size: 45px; font-weight: 800; color: var(--primary); margin: 15px 0; }
-        .btn { border: none; padding: 15px; border-radius: 15px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; font-size: 16px; }
-        .btn-study { background: var(--primary); color: white; }
-        .btn-study:active { transform: scale(0.97); }
+        .timer-display { font-size: 55px; font-weight: 800; color: var(--primary); margin: 20px 0; letter-spacing: -2px; }
+        .task-item { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 15px; border-radius: 15px; margin-bottom: 10px; text-align: left; }
     </style>
 </head>
 <body>
 
-<div class="welcome-header">
+<div class="header">
     <h1>WELCOME NOMAN 👋</h1>
-    <p>Let's conquer your exams today!</p>
+    <p style="opacity:0.9;">Focus. Study. Succeed.</p>
 </div>
 
 <div class="container">
     <div class="card">
-        <h3>⏳ Exam Countdown</h3>
-        <p style="font-size: 13px; color: #636e72;">নিচে পরীক্ষার তারিখ ও সময় সেট করো:</p>
-        <input type="datetime-local" id="exam-target" onchange="saveExamDate()">
+        <h3 style="margin:0; color:var(--accent);">⌛ EXAM COUNTDOWN</h3>
+        <p style="font-size:14px; color:#636e72;">পরীক্ষার ডেট ও টাইম সেট করো:</p>
+        <input type="datetime-local" id="targetDate" onchange="saveDate()">
         
         <div class="countdown-grid">
-            <div class="time-box"><span id="d">00</span><label>Days</label></div>
-            <div class="time-box"><span id="h">00</span><label>Hours</label></div>
-            <div class="time-box"><span id="m">00</span><label>Mins</label></div>
-            <div class="time-box"><span id="s">00</span><label>Secs</label></div>
+            <div class="time-box"><span id="days">00</span><label>Days</label></div>
+            <div class="time-box"><span id="hours">00</span><label>Hours</label></div>
+            <div class="time-box"><span id="mins">00</span><label>Mins</label></div>
+            <div class="time-box"><span id="secs">00</span><label>Secs</label></div>
         </div>
     </div>
 
     <div class="card">
-        <h3>⏱ Focus Study Timer</h3>
-        <div class="timer-val" id="disp">25:00</div>
-        <button class="btn btn-study" onclick="startTimer()" id="sBtn">START FOCUS</button>
+        <h3 style="margin:0;">⏱️ FOCUS TIMER</h3>
+        <div class="timer-display" id="tDisplay">25:00</div>
+        <button class="btn btn-primary" onclick="toggleTimer()" id="tBtn">START STUDY SESSION</button>
+    </div>
+
+    <div class="card">
+        <h3 style="margin:0;">📝 STUDY TASKS</h3>
+        <input type="text" id="taskInput" placeholder="What will you study now?">
+        <button class="btn btn-success" onclick="addTask()">ADD TO LIST</button>
+        <div id="taskList" style="margin-top:20px;"></div>
     </div>
 </div>
 
 <script>
-    // Countdown Logic
-    function saveExamDate() {
-        localStorage.setItem('nomanExamDate', document.getElementById('exam-target').value);
+    // Countdown Engine
+    function saveDate() { localStorage.setItem('noman_date', document.getElementById('targetDate').value); }
+    function loadDate() { 
+        const d = localStorage.getItem('noman_date'); 
+        if(d) document.getElementById('targetDate').value = d; 
     }
 
-    function loadExamDate() {
-        const saved = localStorage.getItem('nomanExamDate');
-        if(saved) document.getElementById('exam-target').value = saved;
-    }
-
-    function refreshCountdown() {
-        const target = new Date(document.getElementById('exam-target').value).getTime();
+    function runCountdown() {
+        const target = new Date(document.getElementById('targetDate').value).getTime();
         const now = new Date().getTime();
-        const gap = target - now;
+        const diff = target - now;
 
-        if (!isNaN(target) && gap > 0) {
-            const days = Math.floor(gap / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((gap % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const mins = Math.floor((gap % (1000 * 60 * 60)) / (1000 * 60));
-            const secs = Math.floor((gap % (1000 * 60)) / 1000);
-
-            document.getElementById('d').innerText = days.toString().padStart(2, '0');
-            document.getElementById('h').innerText = hours.toString().padStart(2, '0');
-            document.getElementById('m').innerText = mins.toString().padStart(2, '0');
-            document.getElementById('s').innerText = secs.toString().padStart(2, '0');
+        if (!isNaN(target) && diff > 0) {
+            document.getElementById('days').innerText = Math.floor(diff / (1000 * 60 * 60 * 24)).toString().padStart(2,'0');
+            document.getElementById('hours').innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2,'0');
+            document.getElementById('mins').innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2,'0');
+            document.getElementById('secs').innerText = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2,'0');
         }
     }
 
-    // Study Timer Logic
-    let timerObj, timeLeft = 1500, active = false;
-    function startTimer() {
-        const b = document.getElementById('sBtn');
-        if(active) { 
-            clearInterval(timerObj); active = false; b.innerText = "RESUME"; 
+    // Study Timer Engine
+    let tObj, sLeft = 1500, running = false;
+    function toggleTimer() {
+        const btn = document.getElementById('tBtn');
+        if(running) { 
+            clearInterval(tObj); running = false; btn.innerText = "RESUME SESSION";
         } else {
-            active = true; b.innerText = "PAUSE";
-            timerObj = setInterval(() => {
-                if(timeLeft <= 0) {
-                    clearInterval(timerObj); alert("Time's up, Noman! Take a break.");
+            running = true; btn.innerText = "PAUSE";
+            tObj = setInterval(() => {
+                if(sLeft <= 0) { 
+                    clearInterval(tObj); alert("Great job, Noman! Session complete."); 
                 } else {
-                    timeLeft--;
-                    document.getElementById('disp').innerText = Math.floor(timeLeft/60) + ":" + (timeLeft%60).toString().padStart(2,'0');
+                    sLeft--;
+                    document.getElementById('tDisplay').innerText = Math.floor(sLeft/60) + ":" + (sLeft%60).toString().padStart(2,'0');
                 }
             }, 1000);
         }
     }
 
-    setInterval(refreshCountdown, 1000);
-    loadExamDate();
+    // Task Engine
+    function addTask() {
+        const input = document.getElementById('taskInput');
+        if(!input.value) return;
+        const div = document.createElement('div');
+        div.className = 'task-item';
+        div.innerHTML = `<span>${input.value}</span><button style="background:var(--success); color:white; border:none; padding:8px 12px; border-radius:10px;" onclick="this.parentElement.remove()">DONE</button>`;
+        document.getElementById('taskList').appendChild(div);
+        input.value = "";
+    }
+
+    setInterval(runCountdown, 1000);
+    loadDate();
 </script>
 </body>
 </html>
