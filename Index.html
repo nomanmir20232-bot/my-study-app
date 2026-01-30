@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Master Pro - Ultra</title>
+    <style>
+        :root { --primary: #5e6df2; --bg: #f4f7fe; --card: #ffffff; --text: #2d3436; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); margin: 0; display: flex; flex-direction: column; align-items: center; }
+        .header { background: var(--primary); color: white; width: 100%; padding: 20px 0; text-align: center; border-radius: 0 0 25px 25px; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 20px; margin-top: 10px; font-size: 13px; }
+        .container { width: 95%; max-width: 450px; margin-top: -10px; padding-bottom: 30px; }
+        .card { background: var(--card); border-radius: 20px; padding: 15px; margin-bottom: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: center; }
+        input { width: 85%; padding: 10px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; outline: none; }
+        button { border: none; padding: 10px 15px; border-radius: 10px; font-weight: bold; cursor: pointer; background: var(--primary); color: white; width: 100%; margin-top: 5px; }
+        .timer-display { font-size: 50px; font-weight: 800; margin: 10px 0; }
+        .list-item { background: #fbfbfb; padding: 10px; border-radius: 10px; margin-top: 5px; display: flex; justify-content: space-between; border-left: 5px solid var(--primary); }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h2 style="margin:0;">📖 Study Master Pro</h2>
+    <div class="stats-grid">
+        <div>💰 Total Points: <span id="total-pts">0</span></div>
+        <div>📅 Daily Points: <span id="daily-pts">0</span></div>
+        <div>⏱ Total Time: <span id="total-hrs">0</span>h</div>
+        <div>🗓 Weekly Pts: <span id="weekly-pts">0</span></div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="card">
+        <h3>⏱ Custom Timer</h3>
+        <input type="number" id="t-input" value="25">
+        <div class="timer-display" id="t-display">25:00</div>
+        <button onclick="toggleTimer()" id="t-btn">Start Session</button>
+    </div>
+
+    <div class="card">
+        <h3>➕ Add Manual Hours</h3>
+        <input type="number" id="m-hrs" placeholder="How many hours?">
+        <button style="background:#4caf50;" onclick="addManual()">Add Time</button>
+    </div>
+
+    <div class="card">
+        <h3>📝 Tasks</h3>
+        <input type="text" id="task-n" placeholder="Task Name">
+        <input type="number" id="task-p" placeholder="Points">
+        <button onclick="addTask()">Add Task</button>
+        <div id="task-list" style="margin-top:10px;"></div>
+    </div>
+</div>
+
+<script>
+    let timer, secLeft, isRunning = false;
+    let store = JSON.parse(localStorage.getItem('study_v5')) || { tp: 0, dp: 0, wp: 0, th: 0 };
+
+    function updateUI() {
+        document.getElementById('total-pts').innerText = store.tp;
+        document.getElementById('daily-pts').innerText = store.dp;
+        document.getElementById('weekly-pts').innerText = store.wp;
+        document.getElementById('total-hrs').innerText = store.th.toFixed(1);
+        localStorage.setItem('study_v5', JSON.stringify(store));
+    }
+
+    function addManual() {
+        let h = parseFloat(document.getElementById('m-hrs').value);
+        if(h > 0) { store.th += h; updateUI(); }
+        document.getElementById('m-hrs').value = "";
+    }
+
+    function toggleTimer() {
+        let btn = document.getElementById('t-btn');
+        if(isRunning) { clearInterval(timer); isRunning = false; btn.innerText = "Resume"; }
+        else {
+            if(!secLeft) secLeft = document.getElementById('t-input').value * 60;
+            isRunning = true; btn.innerText = "Pause";
+            timer = setInterval(() => {
+                if(secLeft <= 0) { 
+                    clearInterval(timer); isRunning = false;
+                    store.th += (document.getElementById('t-input').value / 60);
+                    updateUI(); alert("Session Done!"); secLeft = 0; btn.innerText = "Start New";
+                } else {
+                    secLeft--;
+                    document.getElementById('t-display').innerText = Math.floor(secLeft/60) + ":" + (secLeft%60).toString().padStart(2,'0');
+                }
+            }, 1000);
+        }
+    }
+
+    function addTask() {
+        let n = document.getElementById('task-n').value, p = parseInt(document.getElementById('task-p').value);
+        if(!n || !p) return;
+        let tasks = JSON.parse(localStorage.getItem('tasks_v5') || "[]");
+        tasks.push({n, p}); localStorage.setItem('tasks_v5', JSON.stringify(tasks));
+        document.getElementById('task-n').value = ""; document.getElementById('task-p').value = "";
+        renderTasks();
+    }
+
+    function renderTasks() {
+        let list = document.getElementById('task-list'); list.innerHTML = "";
+        let tasks = JSON.parse(localStorage.getItem('tasks_v5') || "[]");
+        tasks.forEach((t, i) => {
+            let d = document.createElement('div'); d.className = 'list-item';
+            d.innerHTML = `<span>${t.n} (${t.p})</span> <button style="width:auto; margin:0; background:#4caf50;" onclick="doneTask(${i},${t.p})">Done</button>`;
+            list.appendChild(d);
+        });
+    }
+
+    function doneTask(i, p) {
+        store.tp += p; store.dp += p; store.wp += p; updateUI();
+        let tasks = JSON.parse(localStorage.getItem('tasks_v5'));
+        tasks.splice(i, 1); localStorage.setItem('tasks_v5', JSON.stringify(tasks));
+        renderTasks();
+    }
+
+    updateUI(); renderTasks();
+</script>
+</body>
+  </html>
