@@ -3,47 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NOMAN's Study Hub</title>
+    <title>NOMAN's Ultimate Study Pro</title>
     <style>
         :root { --primary: #5e6df2; --bg: #f4f7fe; --card: #ffffff; --accent: #ff7675; --success: #4caf50; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; display: flex; flex-direction: column; align-items: center; padding-bottom: 50px; color: #2d3436; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; display: flex; flex-direction: column; align-items: center; padding-bottom: 50px; }
         
-        .header { background: var(--primary); color: white; width: 100%; padding: 40px 0; text-align: center; border-radius: 0 0 40px 40px; box-shadow: 0 10px 20px rgba(94,109,242,0.2); }
-        .header h1 { margin: 0; font-size: 32px; font-weight: 800; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .header { background: var(--primary); color: white; width: 100%; padding: 30px 0; text-align: center; border-radius: 0 0 35px 35px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .points-badge { background: #ffd700; color: #2d3436; padding: 5px 15px; border-radius: 20px; font-weight: 800; display: inline-block; margin-top: 10px; }
         
-        .container { width: 92%; max-width: 480px; margin-top: -30px; }
-        .card { background: var(--card); border-radius: 25px; padding: 25px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; border: 1px solid rgba(255,255,255,0.8); }
+        .container { width: 92%; max-width: 450px; margin-top: 15px; }
+        .card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.05); text-align: center; }
         
-        /* Exam Countdown Styles */
-        .countdown-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 20px; }
-        .time-box { background: #fcf1f1; padding: 15px 5px; border-radius: 18px; border: 1px solid #ffecec; }
-        .time-box span { display: block; font-size: 24px; font-weight: 800; color: var(--accent); }
-        .time-box label { font-size: 11px; font-weight: bold; color: #b2bec3; text-transform: uppercase; }
+        /* Countdown Grid */
+        .countdown-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 15px; }
+        .time-box { background: #fff5f5; padding: 10px 2px; border-radius: 12px; border: 1px solid #ffe3e3; }
+        .time-box span { display: block; font-size: 20px; font-weight: 800; color: var(--accent); }
+        .time-box label { font-size: 9px; text-transform: uppercase; color: #b2bec3; }
 
-        /* General UI Elements */
-        input { width: 90%; padding: 15px; border-radius: 15px; border: 2px solid #edf2f7; margin: 10px 0; font-size: 16px; transition: 0.3s; }
-        input:focus { border-color: var(--primary); outline: none; }
-        .btn { border: none; padding: 18px; border-radius: 18px; font-weight: 800; cursor: pointer; width: 100%; font-size: 16px; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        input { width: 85%; padding: 12px; border-radius: 12px; border: 2px solid #edf2f7; margin: 8px 0; font-size: 15px; }
+        .btn { border: none; padding: 15px; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; font-size: 15px; transition: 0.3s; }
         .btn-primary { background: var(--primary); color: white; }
-        .btn-success { background: var(--success); color: white; margin-top: 10px; }
+        .btn-success { background: var(--success); color: white; }
         
-        .timer-display { font-size: 55px; font-weight: 800; color: var(--primary); margin: 20px 0; letter-spacing: -2px; }
-        .task-item { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 15px; border-radius: 15px; margin-bottom: 10px; text-align: left; }
+        .timer-display { font-size: 48px; font-weight: 800; color: var(--primary); margin: 15px 0; }
+        .task-list { text-align: left; margin-top: 15px; }
+        .task-item { background: #f8fafc; padding: 10px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <h1>WELCOME NOMAN 👋</h1>
-    <p style="opacity:0.9;">Focus. Study. Succeed.</p>
+    <h1 style="margin:0;">WELCOME NOMAN 👋</h1>
+    <div class="points-badge">💰 Total Points: <span id="pts">0</span></div>
 </div>
 
 <div class="container">
-    <div class="card">
+    <div class="card" style="border-top: 5px solid var(--accent);">
         <h3 style="margin:0; color:var(--accent);">⌛ EXAM COUNTDOWN</h3>
-        <p style="font-size:14px; color:#636e72;">পরীক্ষার ডেট ও টাইম সেট করো:</p>
-        <input type="datetime-local" id="targetDate" onchange="saveDate()">
-        
+        <input type="datetime-local" id="exDate" onchange="saveEx()">
         <div class="countdown-grid">
             <div class="time-box"><span id="days">00</span><label>Days</label></div>
             <div class="time-box"><span id="hours">00</span><label>Hours</label></div>
@@ -53,72 +50,82 @@
     </div>
 
     <div class="card">
-        <h3 style="margin:0;">⏱️ FOCUS TIMER</h3>
-        <div class="timer-display" id="tDisplay">25:00</div>
-        <button class="btn btn-primary" onclick="toggleTimer()" id="tBtn">START STUDY SESSION</button>
+        <h3 style="margin:0;">⏱️ CUSTOM STUDY TIMER</h3>
+        <p style="font-size:12px; color:#636e72;">কত মিনিট পড়তে চাও? (যেমন: ৪৫)</p>
+        <input type="number" id="cTime" value="25" onchange="setCustomTime()">
+        <div class="timer-display" id="tDisp">25:00</div>
+        <button class="btn btn-primary" onclick="startT()" id="tBtn">START SESSION</button>
     </div>
 
     <div class="card">
-        <h3 style="margin:0;">📝 STUDY TASKS</h3>
-        <input type="text" id="taskInput" placeholder="What will you study now?">
-        <button class="btn btn-success" onclick="addTask()">ADD TO LIST</button>
-        <div id="taskList" style="margin-top:20px;"></div>
+        <h3 style="margin:0;">📝 STUDY TASKS (+10 PTS)</h3>
+        <input type="text" id="taskIn" placeholder="Enter task name...">
+        <button class="btn btn-success" onclick="addTask()">ADD TASK</button>
+        <div id="tList" class="task-list"></div>
     </div>
 </div>
 
 <script>
-    // Countdown Engine
-    function saveDate() { localStorage.setItem('noman_date', document.getElementById('targetDate').value); }
-    function loadDate() { 
-        const d = localStorage.getItem('noman_date'); 
-        if(d) document.getElementById('targetDate').value = d; 
-    }
+    let data = JSON.parse(localStorage.getItem('noman_v10')) || { p: 0, date: "" };
+    let timerObj, sLeft = 1500, active = false;
 
-    function runCountdown() {
-        const target = new Date(document.getElementById('targetDate').value).getTime();
+    function save() { localStorage.setItem('noman_v10', JSON.stringify(data)); }
+    
+    // Countdown
+    function saveEx() { data.date = document.getElementById('exDate').value; save(); }
+    setInterval(() => {
+        const target = new Date(data.date).getTime();
         const now = new Date().getTime();
         const diff = target - now;
-
-        if (!isNaN(target) && diff > 0) {
-            document.getElementById('days').innerText = Math.floor(diff / (1000 * 60 * 60 * 24)).toString().padStart(2,'0');
-            document.getElementById('hours').innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2,'0');
-            document.getElementById('mins').innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2,'0');
-            document.getElementById('secs').innerText = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2,'0');
+        if (diff > 0) {
+            document.getElementById('days').innerText = Math.floor(diff/(1000*60*60*24)).toString().padStart(2,'0');
+            document.getElementById('hours').innerText = Math.floor((diff%(1000*60*60*24))/(1000*60*60)).toString().padStart(2,'0');
+            document.getElementById('mins').innerText = Math.floor((diff%(1000*60*60))/(1000*60)).toString().padStart(2,'0');
+            document.getElementById('secs').innerText = Math.floor((diff%(1000*60))/1000).toString().padStart(2,'0');
         }
+    }, 1000);
+
+    // Custom Timer
+    function setCustomTime() {
+        sLeft = document.getElementById('cTime').value * 60;
+        document.getElementById('tDisp').innerText = document.getElementById('cTime').value + ":00";
     }
 
-    // Study Timer Engine
-    let tObj, sLeft = 1500, running = false;
-    function toggleTimer() {
+    function startT() {
         const btn = document.getElementById('tBtn');
-        if(running) { 
-            clearInterval(tObj); running = false; btn.innerText = "RESUME SESSION";
-        } else {
-            running = true; btn.innerText = "PAUSE";
-            tObj = setInterval(() => {
+        if(active) { clearInterval(timerObj); active = false; btn.innerText = "RESUME"; }
+        else {
+            active = true; btn.innerText = "PAUSE";
+            timerObj = setInterval(() => {
                 if(sLeft <= 0) { 
-                    clearInterval(tObj); alert("Great job, Noman! Session complete."); 
+                    clearInterval(timerObj); active = false; btn.innerText = "START";
+                    data.p += 50; updateUI(); alert("Great Work Noman! +50 Points.");
                 } else {
                     sLeft--;
-                    document.getElementById('tDisplay').innerText = Math.floor(sLeft/60) + ":" + (sLeft%60).toString().padStart(2,'0');
+                    document.getElementById('tDisp').innerText = Math.floor(sLeft/60) + ":" + (sLeft%60).toString().padStart(2,'0');
                 }
             }, 1000);
         }
     }
 
-    // Task Engine
+    // Tasks
     function addTask() {
-        const input = document.getElementById('taskInput');
-        if(!input.value) return;
+        const val = document.getElementById('taskIn').value;
+        if(!val) return;
         const div = document.createElement('div');
         div.className = 'task-item';
-        div.innerHTML = `<span>${input.value}</span><button style="background:var(--success); color:white; border:none; padding:8px 12px; border-radius:10px;" onclick="this.parentElement.remove()">DONE</button>`;
-        document.getElementById('taskList').appendChild(div);
-        input.value = "";
+        div.innerHTML = `<span>${val}</span><button style="background:var(--success); border:none; color:white; border-radius:8px; padding:5px 10px;" onclick="addPts(); this.parentElement.remove()">DONE</button>`;
+        document.getElementById('tList').appendChild(div);
+        document.getElementById('taskIn').value = "";
     }
 
-    setInterval(runCountdown, 1000);
-    loadDate();
+    function addPts() { data.p += 10; updateUI(); }
+    function updateUI() { document.getElementById('pts').innerText = data.p; save(); }
+
+    window.onload = () => {
+        document.getElementById('exDate').value = data.date;
+        document.getElementById('pts').innerText = data.p;
+    };
 </script>
 </body>
 </html>
