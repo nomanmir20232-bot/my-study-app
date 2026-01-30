@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>NOMAN AI Study Pro</title>
+
+<style>
+:root{
+--p:#5e6df2;--a:#ff7675;--s:#4caf50;
+--bg:#f4f7fe;--c:#fff;--d:#2d3436
+}
+*{box-sizing:border-box;font-family:Segoe UI}
+body{margin:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;padding-bottom:40px}
+.header{width:100%;background:var(--p);color:#fff;padding:25px;text-align:center;border-radius:0 0 30px 30px}
+.badge{background:#ffd700;color:#000;padding:6px 15px;border-radius:20px;font-weight:800;display:inline-block;margin:5px}
+.container{width:92%;max-width:450px;margin-top:20px}
+.card{background:var(--c);border-radius:20px;padding:20px;margin-bottom:20px;box-shadow:0 8px 20px rgba(0,0,0,.08);text-align:center}
+input,button{width:90%;padding:12px;border-radius:12px;border:2px solid #edf2f7;margin:6px;font-size:15px}
+button{border:none;font-weight:700;cursor:pointer}
+.primary{background:var(--p);color:#fff}
+.success{background:var(--s);color:#fff}
+.timer{font-size:44px;font-weight:800;color:var(--p)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.box{background:#fff5f5;border-radius:12px;padding:10px}
+.box span{font-size:20px;font-weight:800;color:var(--a)}
+.task{display:flex;justify-content:space-between;background:#f8fafc;padding:10px;border-radius:10px;margin-top:5px}
+.task button{background:var(--s);color:#fff;border:none;border-radius:8px;padding:5px 10px}
+.small{font-size:12px;color:#636e72}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<h2>NOMAN AI STUDY PRO 🤖</h2>
+<div class="badge">Daily: <span id="dPts">0</span></div>
+<div class="badge">Weekly: <span id="wPts">0</span></div>
+<div class="badge">Total: <span id="tPts">0</span></div>
+<div class="badge">🔥 Streak: <span id="streak">0</span></div>
+</div>
+
+<div class="container">
+
+<div class="card">
+<h3>⌛ EXAM COUNTDOWN</h3>
+<input type="datetime-local" id="exam">
+<div class="grid">
+<div class="box"><span id="dd">00</span><div class="small">Days</div></div>
+<div class="box"><span id="hh">00</span><div class="small">Hours</div></div>
+<div class="box"><span id="mm">00</span><div class="small">Mins</div></div>
+<div class="box"><span id="ss">00</span><div class="small">Secs</div></div>
+</div>
+</div>
+
+<div class="card">
+<h3>⏱️ STUDY TIMER</h3>
+<input type="number" id="mins" value="25">
+<div class="timer" id="disp">25:00</div>
+<button class="primary" id="btn">START</button>
+<p class="small">+50 pts per session</p>
+</div>
+
+<div class="card">
+<h3>📝 TASKS</h3>
+<input id="taskIn" placeholder="New task">
+<button class="success" onclick="addTask()">ADD</button>
+<div id="tasks"></div>
+</div>
+
+<div class="card">
+<h3>📊 ANALYTICS</h3>
+<p>Today Study: <b><span id="today">0</span> min</b></p>
+<p>Weekly Study: <b><span id="week">0</span> min</b></p>
+<p>Level: <b><span id="lvl">1</span></b></p>
+</div>
+
+</div>
+
+<script>
+let D=new Date(),today=D.toDateString(),week=D.getDay();
+let data=JSON.parse(localStorage.getItem("NOMAN_AI"))||{
+dPts:0,wPts:0,tPts:0,
+todayKey:today,weekKey:week,
+studyToday:0,studyWeek:0,
+streak:0,lastDay:"",
+tasks:[],exam:""
+};
+const save=()=>localStorage.setItem("NOMAN_AI",JSON.stringify(data));
+
+/* RESET DAILY/WEEKLY */
+if(data.todayKey!==today){
+data.dPts=0;data.studyToday=0;
+data.streak=data.lastDay?data.streak+1:1;
+data.todayKey=today;data.lastDay=today;
+}
+if(data.weekKey!==week){
+data.wPts=0;data.studyWeek=0;data.weekKey=week;
+}
+save();
+
+/* COUNTDOWN */
+setInterval(()=>{
+if(!data.exam)return;
+let diff=new Date(data.exam)-new Date();
+if(diff<0)return;
+dd.textContent=Math.floor(diff/86400000);
+hh.textContent=Math.floor(diff%86400000/3600000);
+mm.textContent=Math.floor(diff%3600000/60000);
+ss.textContent=Math.floor(diff%60000/1000);
+},1000);
+exam.onchange=()=>{data.exam=exam.value;save()}
+
+/* TIMER */
+let t=mins.value*60,run=false,intv;
+function reset(){t=mins.value*60;disp.textContent=mins.value+":00"}
+mins.onchange=reset;
+btn.onclick=()=>{
+if(run){clearInterval(intv);run=false;btn.textContent="RESUME";return}
+run=true;btn.textContent="PAUSE";
+intv=setInterval(()=>{
+if(t<=0){
+clearInterval(intv);run=false;btn.textContent="START";
+data.dPts+=50;data.wPts+=50;data.tPts+=50;
+data.studyToday+=mins.value;data.studyWeek+=mins.value;
+reset();update();alert("🔥 Session Done +50");
+return;
+}
+t--;disp.textContent=Math.floor(t/60)+":"+String(t%60).padStart(2,0)
+},1000);
+};
+
+/* TASKS */
+function render(){
+tasks.innerHTML="";
+data.tasks.forEach((x,i)=>{
+let d=document.createElement("div");
+d.className="task";
+d.innerHTML=`<span>${x}</span><button onclick="done(${i})">DONE</button>`;
+tasks.appendChild(d);
+});
+}
+function addTask(){
+let v=taskIn.value.trim();if(!v)return;
+data.tasks.push(v);taskIn.value="";save();render();
+}
+function done(i){
+data.tasks.splice(i,1);
+data.dPts+=10;data.wPts+=10;data.tPts+=10;
+update();render();
+}
+
+/* UPDATE UI */
+function update(){
+dPts.textContent=data.dPts;
+wPts.textContent=data.wPts;
+tPts.textContent=data.tPts;
+today.textContent=data.studyToday;
+week.textContent=data.studyWeek;
+streak.textContent=data.streak;
+lvl.textContent=Math.floor(data.tPts/500)+1;
+save();
+}
+window.onload=()=>{exam.value=data.exam;render();reset();update()}
+</script>
+
+</body>
+</html>
